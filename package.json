@@ -17,5 +17,10 @@
     "url": "https://github.com/inexistentHeap404/insta/issues"
   },
   "homepage": "https://github.com/inexistentHeap404/insta#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0"
+  }
 }
