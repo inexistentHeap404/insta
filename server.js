@@ -5,7 +5,7 @@ const axios = require('axios');
 const app = express();
 const PORT = 80;
 
-const VERIFY_TOKEN = '';
+const VERIFY_TOKEN = 'lol';
 const PAGE_ACCESS_TOKEN = 'IGAAnA1BsDQvlBZAE1tUEQ3QjZAHTDB6Rm1iZAmJCVmNheFROQ0RFX3NXLU5vMFgxdDE0VGt1LWlpcTdsejU2cDUzcy1vbFlQaUpmWnRGSHpYeDlhMHRVYUdwSGE4SFpwRnQ1bG5FQk1CZAG10ZAlJIQ2hOTXJnWjM2SFVjUmFzNE9LOAZDZD';
 
 app.use(bodyParser.json());
