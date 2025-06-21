@@ -1,0 +1,48 @@
+import express from 'express';
+import bodyParser from 'body-parser';
+import axios from 'axios';
+
+const app = express();
+const PORT = 3000;
+
+const VERIFY_TOKEN = '<TOKEN>';
+const PAGE_ACCESS_TOKEN = '<TOKEN>';
+
+app.use(bodyParser.json());
+
+app.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) res.status(200).send(challenge);
+  else res.sendStatus(403);
+});
+
+app.post('/webhook', async (req, res) => {
+  const entry = req.body.entry?.[0];
+  const change = entry?.changes?.[0];
+  const comment = change?.value?.message;
+  const username = change?.value?.from?.username;
+  if (comment?.toLowerCase().includes('send')) {
+    const userId = await getUserIdFromUsername(username);
+    await sendDM(userId, 'Hey! Here’s the thing you asked for.');
+  }
+  res.sendStatus(200);
+});
+
+async function getUserIdFromUsername(username) {
+  const res = await axios.get(`https://graph.facebook.com/v19.0/ig_username?username=${username}&access_token=${PAGE_ACCESS_TOKEN}`);
+  return res.data.id;
+}
+
+async function sendDM(userId, message) {
+  await axios.post(`https://graph.facebook.com/v19.0/${userId}/messages`, {
+    messaging_type: 'RESPONSE',
+    recipient: { id: userId },
+    message: { text: message }
+  }, {
+    headers: { Authorization: `Bearer ${PAGE_ACCESS_TOKEN}` }
+  });
+}
+
+app.listen(PORT);
