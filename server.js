@@ -32,7 +32,12 @@ app.post('/webhook', async (req, res) => {
 
 async function getUserIdFromUsername(username) {
   const res = await axios.get(`https://graph.facebook.com/v19.0/ig_username?username=${username}&access_token=${PAGE_ACCESS_TOKEN}`);
-  return res.data.id;
+  if(res.status === 200){
+    return res.data.id;
+  }
+  else{
+    return res.status;
+  }
 }
 
 async function sendDM(userId, message) {
