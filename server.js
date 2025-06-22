@@ -8,7 +8,7 @@ const PORT = 3000;
 const VERIFY_TOKEN = 'lol';
 const PAGE_ACCESS_TOKEN = 'IGAAnA1BsDQvlBZAE1tUEQ3QjZAHTDB6Rm1iZAmJCVmNheFROQ0RFX3NXLU5vMFgxdDE0VGt1LWlpcTdsejU2cDUzcy1vbFlQaUpmWnRGSHpYeDlhMHRVYUdwSGE4SFpwRnQ1bG5FQk1CZAG10ZAlJIQ2hOTXJnWjM2SFVjUmFzNE9LOAZDZD';
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
