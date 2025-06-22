@@ -19,26 +19,26 @@ app.get('/webhook', (req, res) => {
     res.sendStatus(403);
   }
 });
-
 app.post('/webhook', async (req, res) => {
   try {
     const entry = req.body.entry?.[0];
     const change = entry?.changes?.[0];
-    const comment = change?.value?.message;
-    const commentId = change?.value?.comment_id;
-    console.log('====================================');
-    console.log(comment);
-    console.log('====================================');
+    const comment = change?.value?.text;
+    const commentId = change?.value?.id;
+
+    console.log('📩 New comment:', comment);
+
     if (comment?.toLowerCase().includes('send')) {
-      await replyToComment(commentId, 'Here’s the link you asked for: https://yourlink.com');
+      await replyToComment(commentId, 'Here’s the link you asked for');
     }
 
     res.sendStatus(200);
   } catch (err) {
-    console.error('Webhook error:', err.message);
+    console.error('❌ Webhook error:', err.response?.data || err.message);
     res.sendStatus(500);
   }
 });
+
 
 async function replyToComment(commentId, message) {
   await axios.post(`https://graph.facebook.com/v19.0/${commentId}/replies`, {
