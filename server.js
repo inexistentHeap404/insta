@@ -22,23 +22,13 @@ app.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
   const change = entry?.changes?.[0];
   const comment = change?.value?.message;
-  const username = change?.value?.from?.username;
+  const userId = change?.value?.from?.id;
   if (comment?.toLowerCase().includes('send')) {
-    const userId = await getUserIdFromUsername(username);
     await sendDM(userId, 'Hey! Here’s the thing you asked for.');
   }
   res.sendStatus(200);
 });
 
-async function getUserIdFromUsername(username) {
-  const res = await axios.get(`https://graph.facebook.com/v19.0/ig_username?username=${username}&access_token=${PAGE_ACCESS_TOKEN}`);
-  if(res.status === 200){
-    return res.data.id;
-  }
-  else{
-    return res.status;
-  }
-}
 
 async function sendDM(userId, message) {
   await axios.post(`https://graph.facebook.com/v19.0/${userId}/messages`, {
