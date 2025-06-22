@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
@@ -14,29 +13,39 @@ app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
-  if (mode==="subscribe" && token === VERIFY_TOKEN) res.status(200).send(challenge);
-  else res.sendStatus(403);
+
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
 });
 
 app.post('/webhook', async (req, res) => {
-  const entry = req.body.entry?.[0];
-  const change = entry?.changes?.[0];
-  const comment = change?.value?.message;
-  const userId = change?.value?.from?.id;
-  if (comment?.toLowerCase().includes('send')) {
-    await sendDM(userId, 'Hey! Here’s the thing you asked for.');
+  try {
+    const entry = req.body.entry?.[0];
+    const change = entry?.changes?.[0];
+    const comment = change?.value?.message;
+    const commentId = change?.value?.comment_id;
+
+    if (comment?.toLowerCase().includes('send')) {
+      await replyToComment(commentId, 'Here’s the link you asked for: https://yourlink.com');
+    }
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('Webhook error:', err.message);
+    res.sendStatus(500);
   }
-  res.sendStatus(200);
 });
 
-
-async function sendDM(userId, message) {
-  await axios.post(`https://graph.facebook.com/v19.0/${userId}/messages`, {
-    messaging_type: 'RESPONSE',
-    recipient: { id: userId },
-    message: { text: message }
+async function replyToComment(commentId, message) {
+  await axios.post(`https://graph.facebook.com/v19.0/${commentId}/replies`, {
+    message
   }, {
-    headers: { Authorization: `Bearer ${PAGE_ACCESS_TOKEN}` }
+    headers: {
+      Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`
+    }
   });
 }
 
