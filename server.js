@@ -13,7 +13,6 @@ app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
-
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
     res.status(200).send(challenge);
   } else {
@@ -27,7 +26,9 @@ app.post('/webhook', async (req, res) => {
     const change = entry?.changes?.[0];
     const comment = change?.value?.message;
     const commentId = change?.value?.comment_id;
-
+    console.log('====================================');
+    console.log(req.body);
+    console.log('====================================');
     if (comment?.toLowerCase().includes('send')) {
       await replyToComment(commentId, 'Here’s the link you asked for: https://yourlink.com');
     }
