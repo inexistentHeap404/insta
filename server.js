@@ -39,15 +39,23 @@ app.post('/webhook', async (req, res) => {
   }
 });
 
+async function sendDM(userId, message) {
+  const url = `https://graph.facebook.com/v19.0/${userId}/messages`;
 
-async function replyToComment(commentId, message) {
-  await axios.post(`https://graph.facebook.com/v19.0/${commentId}/replies`, {
-    message
-  }, {
-    headers: {
-      Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`
+  await axios.post(
+    url,
+    {
+      messaging_type: 'RESPONSE',
+      recipient: { id: userId },
+      message: { text: message }
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`
+      }
     }
-  });
+  );
 }
+
 
 app.listen(PORT);
