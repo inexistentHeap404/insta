@@ -27,7 +27,7 @@ app.post('/webhook', async (req, res) => {
     const comment = change?.value?.message;
     const commentId = change?.value?.comment_id;
     console.log('====================================');
-    console.log(req.body);
+    console.log(comment);
     console.log('====================================');
     if (comment?.toLowerCase().includes('send')) {
       await replyToComment(commentId, 'Here’s the link you asked for: https://yourlink.com');
