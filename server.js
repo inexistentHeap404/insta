@@ -29,7 +29,7 @@ app.post('/webhook', async (req, res) => {
     console.log('📩 New comment:', comment);
 
     if (comment?.toLowerCase().includes('send')) {
-      await replyToComment(commentId, 'Here’s the link you asked for');
+      await sendDM(commentId, 'Here’s the link you asked for');
     }
 
     res.sendStatus(200);
