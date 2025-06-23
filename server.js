@@ -5,7 +5,7 @@ const app = express();
 const PORT = 3000;
 
 const VERIFY_TOKEN = 'lol';
-const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABO0r8KTba8ApsARRR5gZBb60GHBu07sdU46ifVBFqrHQha361lMPludRTZAZBH5ZBYRgdX1OreNxfLc3TTbu9zmmyEJuqTEVQBmT2zNDA2lqMG4A8i5KiUjNFDDUclNkit0DoEF6lB9lkTDJQ7TpyBcIz0M4IFTyyxEQ0U2b45zWYnx3gutvXi3XDpD6Dgicz3OmjcmX6FagRK0QsbQ8FclYqc1ZBSHLrQ4bcZD';
+const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABO4Ubus2QT6XdSlGrvonaPOQnWhHvXJBhkS4HHyDndZAZB5oHfXG40tJ5nt9rHKZA9ZCdEiXbegJb24zYOhytAWJjdbs6yaxaZA1UBVpIQ7s8ioyZBQZCN5wcnngPiz82eaDLAbSMkxES3uO5syeDLybcahyEklQtlZCJWOcUSVDfsj35YOZAHMOOZC2AAxyZCJbAWGkQkOgneHVyRnOZBfT4syJO5eq4C46cbjfeMQZDZD';
 
 app.use(express.json());
 
@@ -43,7 +43,7 @@ app.post('/webhook', async (req, res) => {
 });
 
 async function sendDM(instagramUserId, message) {
-  const url = `https://graph.facebook.com/v19.0/me/messages`;
+const url = `https://graph.facebook.com/v19.0/${instagramUserId}/messages`;
 
   const payload = {
     recipient: { id: instagramUserId },
