@@ -200,7 +200,7 @@ app.post('/webhook', async (req, res) => {
     console.log('👤 Sender ID:', senderId);
     
     if (commentText?.toLowerCase().includes('send') && senderId) {
-      await sendDM(senderId, '📦 Here's the link you asked for: https://yourlink.com');
+      await sendDM(senderId, 'Hey there!!! how you doin');
     }
     
     res.sendStatus(200);
