@@ -64,7 +64,7 @@ app.listen(PORT, () => {
 });
 */
 
-
+/*
 const express = require('express');
 const axios = require('axios');
 const app = express();
@@ -89,29 +89,21 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', async (req, res) => {
-  try {
     console.log('📨 Webhook received:', JSON.stringify(req.body, null, 2));
     
     const entry = req.body.entry?.[0];
     
-    if (entry?.changes) {
-      for (const change of entry.changes) {
-        if (change.field === 'comments' && change.value) {
-          const comment = change.value;
-          const commentText = comment.text;
-          const commenterId = comment.from?.id;
-          const mediaId = comment.media?.id;
-          
-          console.log('💬 Comment received:', commentText);
-          console.log('👤 From user:', commenterId);
-          
-          if (commentText?.toLowerCase().includes('send') && commenterId) {
-            await sendInstagramDM(commenterId, '📦 Here\'s the link you asked for: https://yourlink.com');
-          }
-        }
-      }
-    }
+    const comment = change.value;
+    const commentText = comment.text;
+    const commenterId = comment.from?.id;
+    const mediaId = comment.media?.id;
     
+    console.log('💬 Comment received:', commentText);
+    console.log('👤 From user:', commenterId);
+    
+    if (commentText?.toLowerCase().includes('send') && commenterId) {
+      await sendInstagramDM(commenterId, '📦 Here\'s the link you asked for: https://yourlink.com');
+    }
     if (entry?.messaging) {
       for (const messagingEvent of entry.messaging) {
         const senderId = messagingEvent.sender?.id;
@@ -122,12 +114,10 @@ app.post('/webhook', async (req, res) => {
         }
       }
     }
-    
+    else{
+      res.sendStatus(500)
+    }
     res.sendStatus(200);
-  } catch (err) {
-    console.error('❌ Webhook error:', err.response?.data || err.message);
-    res.sendStatus(500);
-  }
 });
 
 async function sendInstagramDM(instagramUserId, message) {
@@ -171,4 +161,77 @@ process.on('uncaughtException', (err) => {
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
+});
+*/
+
+const express = require('express');
+const axios = require('axios');
+const app = express();
+const PORT = 3000;
+const VERIFY_TOKEN = 'lol';
+const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABOxDX8aUEloLucOL87Pm5GHvlLvgnAT11k76p1EvHfpemZCZAjWXIcvGNs6XGKW4e7o63QrEkXiBQQFHdZCefVyzO27lnF0jYoaPjZCstOiS2cX1zFEIWnrxx11lZBoMA3tQjdSHym9PkW9d1M6lCBm2ZAkTIMky8wVGjOXLVe26I4cGbdkp6mVokw7dMtTwZAWieZAAleOz4EY9nIU3EmHZBoOoYOiIgMk9XBBQZDZD';
+
+app.use(express.json());
+
+app.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    console.log('✅ Webhook verified');
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+app.post('/webhook', async (req, res) => {
+  try {
+    // Log the entire request body to see what we're getting
+    console.log('📨 Full webhook body:', JSON.stringify(req.body, null, 2));
+    
+    const entry = req.body.entry?.[0];
+    const change = entry?.changes?.[0];
+    const commentText = change?.value?.text;
+    const senderId = change?.value?.from?.id;
+    
+    console.log('📨 Incoming comment:', commentText);
+    console.log('👤 Sender ID:', senderId);
+    
+    if (commentText?.toLowerCase().includes('send') && senderId) {
+      await sendDM(senderId, '📦 Here's the link you asked for: https://yourlink.com');
+    }
+    
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('❌ Webhook error:', err.response?.data || err.message);
+    res.sendStatus(500);
+  }
+});
+
+async function sendDM(instagramUserId, message) {
+  try {
+    const url = `https://graph.facebook.com/v19.0/me/messages`;
+    const payload = {
+      recipient: { id: instagramUserId },
+      message: { text: message }
+    };
+    
+    const response = await axios.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`
+      }
+    });
+    
+    console.log(`✅ Sent DM to ${instagramUserId}`);
+    return response.data;
+  } catch (error) {
+    console.error('❌ DM Error:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server listening on port ${PORT}`);
 });
