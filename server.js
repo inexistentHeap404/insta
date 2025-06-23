@@ -43,11 +43,10 @@ app.post('/webhook', async (req, res) => {
 });
 
 async function sendDM(instagramUserId, message) {
-const url = `https://graph.facebook.com/v19.0/${instagramUserId}/messages`;
+const url = `https://graph.instagram.com/v23.0/${instagramUserId}/messages`;
 
   const payload = {
     recipient: { id: instagramUserId },
-    messaging_type: 'RESPONSE',
     message: { text: message }
   };
 
