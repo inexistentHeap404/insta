@@ -30,7 +30,7 @@ app.post('/webhook', async (req, res) => {
 
     try {
       await axios.post(
-        `https://graph.facebook.com/v20.0/${IG_USER_ID}/messages`,
+        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
         {
           recipient: { id: senderId },
           message: { text: "Thanks for commenting!" }
