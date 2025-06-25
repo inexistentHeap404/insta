@@ -22,17 +22,21 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-app.post('/webhook', async (req, res) => {
+aapp.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
 
-  if (changes?.field === 'comments') {
+  if (
+    changes?.field === 'comments' &&
+    changes.value?.comment_id && // prevents empty trigger
+    changes.value?.from?.id !== IG_USER_ID // avoid replying to your own comment
+  ) {
     const comment = changes.value;
     const senderId = comment.from.id;
 
     try {
       await axios.post(
-        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
+        `https://graph.facebook.com/v20.0/${IG_USER_ID}/messages`,
         {
           recipient: { id: senderId },
           message: { text: "Thanks for commenting!" }
