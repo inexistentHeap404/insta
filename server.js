@@ -30,8 +30,6 @@ app.post('/webhook', async (req, res) => {
     const comment = changes.value;
     const senderId = comment.from.id;
     const commentId = comment.comment_id;
-    if (commentId === lastCommentId) return res.sendStatus(200);
-    lastCommentId = commentId;
     try {
       await axios.post(
         `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
