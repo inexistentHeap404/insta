@@ -25,18 +25,25 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
-
-  if (
-    changes?.field === 'comments' &&
-    changes.value?.comment_id && // prevents empty trigger
-    changes.value?.from?.id !== IG_USER_ID // avoid replying to your own comment
-  ) {
+  if (changes?.field === 'comments') {
     const comment = changes.value;
     const senderId = comment.from.id;
+    await axios.post(
+      `https://graph.facebook.com/v20.0/${comment.comment_id}/replies`,
+      {
+        message: "Check your DM!!!"
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
 
     try {
       await axios.post(
-        `https://graph.facebook.com/v20.0/${IG_USER_ID}/messages`,
+        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
         {
           recipient: { id: senderId },
           message: { text: "Thanks for commenting!" }
@@ -55,6 +62,8 @@ app.post('/webhook', async (req, res) => {
 
   res.sendStatus(200);
 });
+
+
 
 app.listen(3000, () => {
   console.log('http://localhost:3000');
