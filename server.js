@@ -29,7 +29,7 @@ app.post('/webhook', async (req, res) => {
   if (changes?.field === 'comments') {
     const comment = changes.value;
     const senderId = comment.from.id;
-    const commentId = comment.comment_id;
+    const commentId = comment.id;
     try {
       await axios.post(
         `https://graph.facebook.com/v20.0/${commentId}/replies`,
