@@ -22,7 +22,7 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-aapp.post('/webhook', async (req, res) => {
+app.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
 
