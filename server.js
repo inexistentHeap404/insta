@@ -30,6 +30,23 @@ app.post('/webhook', async (req, res) => {
     const senderId = comment.from.id;
     const commentId = comment.id;
     try {
+      try{
+        await axios.post(
+          `https://graph.facebook.com/v20.0/${comment.id}/replies`,
+          {
+            message: "Check your DM! 🚀"
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      }
+      catch(err){
+        console.error(err.response?.data || err.message);
+      }
       await axios.post(
         `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
         {
