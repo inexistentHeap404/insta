@@ -21,7 +21,7 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-app.post('/webhook', async (req, res) => {
+/*app.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
   let lastCommentId;
@@ -39,7 +39,7 @@ app.post('/webhook', async (req, res) => {
           {
             headers: {
               Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             }
           }
         );
@@ -64,6 +64,60 @@ app.post('/webhook', async (req, res) => {
       console.error(err.response?.data || err.message);
     }
   }
+  res.sendStatus(200);
+});*/
+
+
+let lastCommentId;
+
+app.post('/webhook', async (req, res) => {
+  const entry = req.body.entry?.[0];
+  const changes = entry?.changes?.[0];
+
+  if (changes?.field === 'comments') {
+    const comment = changes.value;
+    const senderId = comment.from.id;
+    const commentId = comment.id;
+
+    if (commentId === lastCommentId) return res.sendStatus(200);
+    lastCommentId = commentId;
+
+    try {
+      try {
+        await axios.post(
+          `https://graph.facebook.com/v20.0/${comment.id}/replies`,
+          {
+            message: "Check your DM! 🚀"
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      } catch (err) {
+        console.error(err.response?.data || err.message);
+      }
+
+      await axios.post(
+        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
+        {
+          recipient: { id: senderId },
+          message: { text: "Thanks for commenting!" }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
+  }
+
   res.sendStatus(200);
 });
 
