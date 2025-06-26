@@ -67,7 +67,6 @@ app.get('/webhook', (req, res) => {
   res.sendStatus(200);
 });*/
 
-/*
 let lastCommentId;
 
 app.post('/webhook', async (req, res) => {
@@ -86,67 +85,6 @@ app.post('/webhook', async (req, res) => {
       try {
         await axios.post(
           `https://graph.facebook.com/v20.0/${comment.id}/replies`,
-          {
-            message: "Check your DM! 🚀"
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-      } catch (err) {
-        console.error(err.response?.data || err.message);
-      }
-
-      await axios.post(
-        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
-        {
-          recipient: { id: senderId },
-          message: { text: "Thanks for commenting!" }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-    }
-  }
-
-  res.sendStatus(200);
-});
-*/
-
-app.post('/webhook', async (req, res) => {
-  const entry = req.body.entry?.[0];
-  const changes = entry?.changes?.[0];
-
-  if (changes?.field === 'comments') {
-    const comment = changes.value;
-    const senderId = comment.from.id;
-    const commentId = comment.id;
-
-    try {
-      // Check if the comment already has replies
-      const repliesRes = await axios.get(
-        `https://graph.facebook.com/v20.0/${commentId}/replies`,
-        {
-          headers: {
-            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`
-          }
-        }
-      );
-
-      if (repliesRes.data?.data?.length > 0) return res.sendStatus(200); // already replied
-
-      try {
-        await axios.post(
-          `https://graph.facebook.com/v20.0/${commentId}/replies`,
           {
             message: "Check your DM! 🚀"
           },
