@@ -6,10 +6,9 @@ const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = 'lol';
-const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABOzZBhR95cHbvUAhwAtVJSalhrsRtE6netZCCCLB4d2UJXCvYKPjehyEaBpOKRI63zSeTTrcfmuK8BwU15EnVSac7CW2mWaJ1zcqoj8G5ZA62kNu4jVcliRoMnUmwDx9KNedYR8MBLCOolEA08KaZAhZAgYnBVTnu97HCRIIAU4IiDR6pmsw2JgpuXYtk3h3pWDsZB2AZBSg8C6tWLS14GMClVTTGonBXV4ZD';
+// THE BELOW PAGE ACCESS TOKEN IS VALID FOR 60 DAYS
+const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABOzhG1KWyx6al3yVbZBsXiv4oEWKVtjrG5hR4T1txEAvhyRFeMxaxLvIjGikEavlBxXTq8cZB0WoDI8t0nSbUEWU2cs2Ppb9mXiIIzouNVr4y8xHhqqOxemUoqW6hh6rvNlwJZBL6Sx86CUewZAaL2jQSDj4vk6yuIZC0rE2v1anX0LQB6ZBhdtaZCBj';
 const IG_USER_ID = '700137003181494';
-//700137003181494
-//17841475042746798
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
