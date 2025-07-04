@@ -8,7 +8,7 @@ const VERIFY_TOKEN = 'lol';
 const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABPP3wicNWomOvoWA3akqhRhBYyHRS4g5GMqkgAlR1qIHKdT1V7eUY58ZCZCn0xzHL6KUEo8b8d1tWigbnWy98gMLLI02ZBktG1M5jHx7WsMyyXBZCc2XzODn9MtWeGRA2VTRDU7ROoxxDTHkcOWxSxJJkqZCfUnZCA35Xwfeke2csIMQ9pbd6GMzbjVR1E9ndRJh3uqu5ZA62i0W09Wwu8fjLyza3umKE2sZD';
 const IG_USER_ID = '700137003181494';
 
-const handledCommentIds = [];
+let handledCommentIds = [];
 
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
@@ -25,14 +25,15 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
-
+  
   if (changes?.field === 'comments') {
     const comment = changes.value;
     const senderId = comment.from.id;
     const commentId = comment.id;
-
+    
     if (handledCommentIds.includes(commentId)) return res.sendStatus(200);
     if (senderId === IG_USER_ID) return res.sendStatus(200);
+    handledCommentIds.push(commentId);
     try {
       try {
         await axios.post(
@@ -63,7 +64,6 @@ app.post('/webhook', async (req, res) => {
       console.error(err.response?.data || err.message);
     }
 
-    handledCommentIds.push(commentId);
   }
 
   res.sendStatus(200);
