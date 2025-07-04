@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = 'lol';
-const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABOzhG1KWyx6al3yVbZBsXiv4oEWKVtjrG5hR4T1txEAvhyRFeMxaxLvIjGikEavlBxXTq8cZB0WoDI8t0nSbUEWU2cs2Ppb9mXiIIzouNVr4y8xHhqqOxemUoqW6hh6rvNlwJZBL6Sx86CUewZAaL2jQSDj4vk6yuIZC0rE2v1anX0LQB6ZBhdtaZCBj';
+const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABPNQOQyCixsRPZAzHulm5Qn5B71YIAol9NUVaqhipCxN4miASZAyGtFSmLdXUYIeoeRqma0YIjcxNvxgGkHkKocxJvOvesWM9VfQfkwgyXXIqGy91cY5ulYygbKdlh1EuZBHawnEWzOo8fuXQyJXKuZAPIPDr9gO9KSZCz1GCnrI184tZCr9e0cPOG7rtZB3kyZCZBLtlJ9VqUT81KhZBzZAVNW6ZA6InJ9uLJmzINQZDZD';
 const IG_USER_ID = '700137003181494';
 
 app.get('/webhook', (req, res) => {
