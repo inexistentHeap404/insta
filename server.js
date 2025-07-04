@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
@@ -8,6 +7,8 @@ app.use(express.json());
 const VERIFY_TOKEN = 'lol';
 const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABPP3wicNWomOvoWA3akqhRhBYyHRS4g5GMqkgAlR1qIHKdT1V7eUY58ZCZCn0xzHL6KUEo8b8d1tWigbnWy98gMLLI02ZBktG1M5jHx7WsMyyXBZCc2XzODn9MtWeGRA2VTRDU7ROoxxDTHkcOWxSxJJkqZCfUnZCA35Xwfeke2csIMQ9pbd6GMzbjVR1E9ndRJh3uqu5ZA62i0W09Wwu8fjLyza3umKE2sZD';
 const IG_USER_ID = '700137003181494';
+
+const handledCommentIds = [];
 
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode'];
@@ -20,8 +21,6 @@ app.get('/webhook', (req, res) => {
     res.sendStatus(403);
   }
 });
-
-const handledCommentIds = [];
 
 app.post('/webhook', async (req, res) => {
   const entry = req.body.entry?.[0];
@@ -33,40 +32,40 @@ app.post('/webhook', async (req, res) => {
     const commentId = comment.id;
 
     if (handledCommentIds.includes(commentId)) return res.sendStatus(200);
+    if (senderId === IG_USER_ID) return res.sendStatus(200);
+
+    try {
+      await axios.post(
+        `https://graph.facebook.com/v20.0/${commentId}/replies`,
+        { message: "Check your DM! 🚀" },
+        {
+          headers: {
+            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    } catch (err) {}
+
+    try {
+      await axios.post(
+        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
+        {
+          recipient: { id: senderId },
+          message: { text: "Thanks for commenting!" }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+    }
+
     handledCommentIds.push(commentId);
-
-    try{
-      await axios.post(
-        `https://graph.facebook.com/v20.0/${comment.id}/replies`,
-        {
-          message: "Check your DM! 🚀"
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-    }
-    catch(err){}
-    try {
-      await axios.post(
-        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
-        {
-          recipient: { id: senderId },
-          message: { text: "Thanks for commenting!" }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-    }
   }
 
   res.sendStatus(200);
@@ -75,92 +74,3 @@ app.post('/webhook', async (req, res) => {
 app.listen(3000, () => {
   console.log('http://localhost:3000');
 });
-
-
-
-
-/*
-const express = require('express');
-const bodyParser = require('body-parser');
-const axios = require('axios');
-
-const app = express();
-app.use(express.json());
-
-const VERIFY_TOKEN = 'lol';
-// THE BELOW PAGE ACCESS TOKEN IS VALID FOR 60 DAYS
-const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABOzhG1KWyx6al3yVbZBsXiv4oEWKVtjrG5hR4T1txEAvhyRFeMxaxLvIjGikEavlBxXTq8cZB0WoDI8t0nSbUEWU2cs2Ppb9mXiIIzouNVr4y8xHhqqOxemUoqW6hh6rvNlwJZBL6Sx86CUewZAaL2jQSDj4vk6yuIZC0rE2v1anX0LQB6ZBhdtaZCBj';
-const IG_USER_ID = '700137003181494';
-app.get('/webhook', (req, res) => {
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
-
-  if (mode && token === VERIFY_TOKEN) {
-    res.status(200).send(challenge);
-  } else {
-    res.sendStatus(403);
-  }
-});
-
-let lastCommentId;
-
-app.post('/webhook', async (req, res) => {
-  const entry = req.body.entry?.[0];
-  const changes = entry?.changes?.[0];
-
-  if (changes?.field === 'comments') {
-    const comment = changes.value;
-    const senderId = comment.from.id;
-    const commentId = comment.id;
-
-    if (commentId === lastCommentId) return res.sendStatus(200);
-    lastCommentId = commentId;
-
-    try {
-      try {
-        await axios.post(
-          `https://graph.facebook.com/v20.0/${comment.id}/replies`,
-          {
-            message: "Check your DM! 🚀"
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-      } catch (err) {
-        console.error(err.response?.data || err.message);
-      }
-
-      await axios.post(
-        `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
-        {
-          recipient: { id: senderId },
-          message: { text: "Thanks for commenting!" }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-    } catch (err) {
-      console.error(err.response?.data || err.message);
-    }
-  }
-
-  res.sendStatus(200);
-});
-
-
-
-
-app.listen(3000, () => {
-  console.log('http://localhost:3000');
-});
-
-*/
