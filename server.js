@@ -35,7 +35,7 @@ app.post('/webhook', async (req, res) => {
     if (handledCommentIds.includes(commentId)) return res.sendStatus(200);
     handledCommentIds.push(commentId);
 
-    try {
+    try{
       await axios.post(
         `https://graph.facebook.com/v20.0/${comment.id}/replies`,
         {
@@ -48,6 +48,9 @@ app.post('/webhook', async (req, res) => {
           }
         }
       );
+    }
+    catch(err){}
+    try {
       await axios.post(
         `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
         {
