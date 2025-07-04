@@ -10,7 +10,7 @@ const IG_USER_ID = '700137003181494';
 
 let handledCommentIds = [];
 
-app.get('/webhook', (req, res) => {
+app.get('/webhook', (req, res) => { 
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
@@ -30,10 +30,14 @@ app.post('/webhook', async (req, res) => {
     const comment = changes.value;
     const senderId = comment.from.id;
     const commentId = comment.id;
-    
+    const commentText = comment.text?.toLowerCase() || '';
+
     if (handledCommentIds.includes(commentId)) return res.sendStatus(200);
     if (senderId === IG_USER_ID) return res.sendStatus(200);
+    if (!commentText.includes("send")) return res.sendStatus(200);
+
     handledCommentIds.push(commentId);
+
     try {
       try {
         await axios.post(
@@ -47,6 +51,7 @@ app.post('/webhook', async (req, res) => {
           }
         );
       } catch (err) {}
+
       await axios.post(
         `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
         {
@@ -63,7 +68,6 @@ app.post('/webhook', async (req, res) => {
     } catch (err) {
       console.error(err.response?.data || err.message);
     }
-
   }
 
   res.sendStatus(200);
