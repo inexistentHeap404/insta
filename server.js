@@ -33,11 +33,9 @@ app.post('/webhook', async (req, res) => {
     const commentText = comment.text?.toLowerCase() || '';
 
     if (handledCommentIds.includes(commentId)) return res.sendStatus(200);
-    if (senderId === IG_USER_ID) return res.sendStatus(200);
-    if (!commentText.includes("send")) return res.sendStatus(200);
-
+    if (!commentText.includes("send")) return res.sendStatus(200);    
     handledCommentIds.push(commentId);
-
+    
     try {
       try {
         await axios.post(
