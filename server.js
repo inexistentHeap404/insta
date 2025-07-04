@@ -33,21 +33,19 @@ app.post('/webhook', async (req, res) => {
 
     if (handledCommentIds.includes(commentId)) return res.sendStatus(200);
     if (senderId === IG_USER_ID) return res.sendStatus(200);
-
     try {
-      await axios.post(
-        `https://graph.facebook.com/v20.0/${commentId}/replies`,
-        { message: "Check your DM! 🚀" },
-        {
-          headers: {
-            Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
+      try {
+        await axios.post(
+          `https://graph.facebook.com/v20.0/${commentId}/replies`,
+          { message: "Check your DM! 🚀" },
+          {
+            headers: {
+              Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+              'Content-Type': 'application/json'
+            }
           }
-        }
-      );
-    } catch (err) {}
-
-    try {
+        );
+      } catch (err) {}
       await axios.post(
         `https://graph.facebook.com/v23.0/${IG_USER_ID}/messages`,
         {
