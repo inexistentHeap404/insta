@@ -13,8 +13,8 @@ let handledCommentIds = [];
 
 
 async function exchangeShortLivedToken(shortLivedToken) {
-  const clientId = 'YOUR_CLIENT_ID';
-  const clientSecret = 'YOUR_CLIENT_SECRET';
+  const clientId = '701667302579888';
+  const clientSecret = 'cddfc404197e0d7deb987757da790ece';
 
   const url = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${clientId}&client_secret=${clientSecret}&fb_exchange_token=${shortLivedToken}`;
 
