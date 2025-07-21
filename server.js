@@ -8,7 +8,7 @@ app.use(express.json());
 const VERIFY_TOKEN = 'lol';
 const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABPLuV7VumAQds6OZAcbWZB8iUsU05AnXTpVGdl0VlytATWnAqrk39g8IcHmv7HDoLz1jvLxsQdVZC46J14NKsjKTvIN3u2hgiasR5M5khvPy61zdX9DRsP3AV8UutVgwpGdZA63ZA7IOXoTOWO6WFLdIjmHzojZAwIV0XgWt5c3IZAXlgblaz2eOrWDbPkzbiOW9C0y4W7eUOlenR45mpPeK52BFUpszjNIZD';
 const IG_USER_ID = '700137003181494';
-
+const IG_PAGE_ID = '17841475042746798'
 let handledCommentIds = [];
 
 app.get('/webhook', (req, res) => { 
@@ -76,7 +76,7 @@ app.post('/webhook', async (req, res) => {
 app.get('/insta-feed', async (req, res) => {
   try {
     const { data } = await axios.get(
-      `https://graph.facebook.com/v20.0/${IG_USER_ID}/media`,
+      `https://graph.facebook.com/v20.0/${IG_PAGE_ID}/media`,
       {
         params: {
           fields: 'id,media_type,media_url,thumbnail_url,caption,permalink',
