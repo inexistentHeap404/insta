@@ -46,7 +46,7 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', async (req, res) => {
-  const shortToken = 'EAAJZBKaZASHrABPLDZC54WfReSdiGkw0vcgdfH5eQjeusXkuCbhv1kFpzZBAZAZCfHbuGhMQne5bycZBi3Y3MN6umknAQ3kl97UYzGh4E6ygnoutNNRFHXXQfKxCoCrkIsQAsS6qVHn6SRYPXTMElXiySeAwCz5y7V8oHuBJzsj1ElIX1hyhwZCcHPp4QQNvxduyxpZAGb9GVzPrPaWtmZBjyBBaE2LxEp0qjN4hYVFjpSiHEujAZDZD';
+  const shortToken = 'EAAJZBKaZASHrABPIsXXopLHwuw1yw5tG4A4Vld1Y7ZAEcTZBeWCEuVjlSVNsqJbimg5SUV8xk6MWCJZB8kMKa0LhQUbZB17JkbV1jMiKNwTZAgKGsOmOILIm8XjNZCcVNq44M0JvGbgKKw2XJFI7xMTF0QbutUfEiO9UFMMVXZCgcTM0hWvr2voPSN1CztJEAKKQDUkHi6M1JLnxPAiY2hmctSC3f4FtBKxaxY74QuA8kNB3uywYZD';
     exchangeShortLivedToken(shortToken)
       .then(longToken => {
         PAGE_ACCESS_TOKEN = longToken;
