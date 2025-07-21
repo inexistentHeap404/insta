@@ -71,6 +71,34 @@ app.post('/webhook', async (req, res) => {
   res.sendStatus(200);
 });
 
+// ✅ GET Instagram feed thumbnails
+app.get('/insta-feed', async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://graph.facebook.com/v20.0/${IG_USER_ID}/media`,
+      {
+        params: {
+          fields: 'id,media_type,media_url,thumbnail_url,caption,permalink',
+          access_token: PAGE_ACCESS_TOKEN
+        }
+      }
+    );
+
+    const thumbnails = data.data.map(post => ({
+      id: post.id,
+      media_type: post.media_type,
+      thumbnail: post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url,
+      permalink: post.permalink,
+      caption: post.caption || ''
+    }));
+
+    res.json(thumbnails);
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).send('Failed to fetch IG feed');
+  }
+});
+
 app.listen(3000, () => {
   console.log('http://localhost:3000');
 });
