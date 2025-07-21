@@ -6,10 +6,32 @@ app.use(cors())
 app.use(express.json());
 
 const VERIFY_TOKEN = 'lol';
-const PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABPLuV7VumAQds6OZAcbWZB8iUsU05AnXTpVGdl0VlytATWnAqrk39g8IcHmv7HDoLz1jvLxsQdVZC46J14NKsjKTvIN3u2hgiasR5M5khvPy61zdX9DRsP3AV8UutVgwpGdZA63ZA7IOXoTOWO6WFLdIjmHzojZAwIV0XgWt5c3IZAXlgblaz2eOrWDbPkzbiOW9C0y4W7eUOlenR45mpPeK52BFUpszjNIZD';
+let PAGE_ACCESS_TOKEN = 'EAAJZBKaZASHrABPLuV7VumAQds6OZAcbWZB8iUsU05AnXTpVGdl0VlytATWnAqrk39g8IcHmv7HDoLz1jvLxsQdVZC46J14NKsjKTvIN3u2hgiasR5M5khvPy61zdX9DRsP3AV8UutVgwpGdZA63ZA7IOXoTOWO6WFLdIjmHzojZAwIV0XgWt5c3IZAXlgblaz2eOrWDbPkzbiOW9C0y4W7eUOlenR45mpPeK52BFUpszjNIZD';
 const IG_USER_ID = '700137003181494';
 const IG_PAGE_ID = '17841475042746798'
 let handledCommentIds = [];
+
+
+async function exchangeShortLivedToken(shortLivedToken) {
+  const clientId = 'YOUR_CLIENT_ID';
+  const clientSecret = 'YOUR_CLIENT_SECRET';
+
+  const url = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${clientId}&client_secret=${clientSecret}&fb_exchange_token=${shortLivedToken}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  if (data.access_token) {
+    console.log("Long-lived token:", data.access_token);
+    return data.access_token;
+  } else {
+    console.error("Error getting long-lived token:", data);
+    throw new Error("Failed to exchange token");
+  }
+}
+
+
+
 
 app.get('/webhook', (req, res) => { 
   const mode = req.query['hub.mode'];
@@ -24,6 +46,15 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', async (req, res) => {
+  const shortToken = 'EAAJZBKaZASHrABPLDZC54WfReSdiGkw0vcgdfH5eQjeusXkuCbhv1kFpzZBAZAZCfHbuGhMQne5bycZBi3Y3MN6umknAQ3kl97UYzGh4E6ygnoutNNRFHXXQfKxCoCrkIsQAsS6qVHn6SRYPXTMElXiySeAwCz5y7V8oHuBJzsj1ElIX1hyhwZCcHPp4QQNvxduyxpZAGb9GVzPrPaWtmZBjyBBaE2LxEp0qjN4hYVFjpSiHEujAZDZD';
+    exchangeShortLivedToken(shortToken)
+      .then(longToken => {
+        PAGE_ACCESS_TOKEN = longToken;
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
   const entry = req.body.entry?.[0];
   const changes = entry?.changes?.[0];
   
